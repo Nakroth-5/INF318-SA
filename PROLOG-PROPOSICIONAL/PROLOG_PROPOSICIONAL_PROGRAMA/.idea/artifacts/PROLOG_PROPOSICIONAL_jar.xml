@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PROLOG_PROPOSICIONAL:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PROLOG_PROPOSICIONAL_jar</output-path>
+    <root id="archive" name="PROLOG_PROPOSICIONAL.jar">
+      <element id="module-output" name="PROLOG_PROPOSICIONAL" />
+      <element id="module-test-output" name="PROLOG_PROPOSICIONAL" />
+    </root>
+  </artifact>
+</component>

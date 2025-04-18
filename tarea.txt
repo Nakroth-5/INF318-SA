@@ -1,0 +1,32 @@
+ttProyecto#1 Un PROLOG Proposicional
+Indicaciones
+*El proyecto de desarrollo es individual
+*Lenguajes a desarrollar
+(Una de estas es opcional)
+-Delphi
+-Java
+-C, C++, C#
+-Visual Basic(VB)
+Entrega: Hasta el Mie 23/abril/2025,
+Hrs 23:59:59 enviar la carpeta del proyeto
+(comprimida en .zip o .rar) al correo:
+ginobarroso@uagrm.edu.bo
+Defensa: A partir del 29/abril/2025
+Descripción:
+Crear un software, que permita al usuario introducir un programa
+PROLOG en un editor Proveido por el mismo Softwware
+Tambien permitir:
+-Cargar un archivo(Programa a editor)
+-Guardar el contenido del editor
+OBLIGATORIO UTILIZAR EL CUT(!) Y EL fail
+
+*Asumir que el programa PROLOG que esta correcto en el editor, es correcto.
+*Si una cabeza de clausula no está en el programa, asumirla fail.
+/*Recursivo(opcional)*/
+OPCIONAL:
+-Revisar la sintaxis del programa
+-Permitir un resolvente con mas de una letra.
+
+[p,q    ] [Inferir] //<-p, q
+**Realizar un trace de la ejecución
+
