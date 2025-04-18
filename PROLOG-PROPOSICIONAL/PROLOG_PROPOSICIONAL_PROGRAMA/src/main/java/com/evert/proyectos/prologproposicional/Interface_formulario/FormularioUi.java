@@ -10,6 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -17,8 +18,10 @@ import java.util.List;
 
 public class FormularioUi extends JFrame {
     private PanelArbolProlog panelArbolProlog;
-    BaseDeConocimiento baseDeConocimiento;
-    ResolverBC resolverBC;
+    private BaseDeConocimiento baseDeConocimiento;
+    private ResolverBC resolverBC;
+    private ArchivoTexto archivo;
+    private boolean archivoAbierto;
     private Map<String, JTextField> textFields;
     private Map<String, JLabel> labels;
     private JTextField textField;
@@ -32,10 +35,13 @@ public class FormularioUi extends JFrame {
         textFields = new HashMap<>();
         labels = new HashMap<>();
 
+        archivoAbierto = false;
+
         configurarVentana();
         agregarPanelArbol();
         agregarPanelOperaciones();
         menuini();
+
         setVisible(true);
     }
 
@@ -65,10 +71,12 @@ public class FormularioUi extends JFrame {
         setSize(1050, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFont(new Font("Consolas", Font.PLAIN, 16));
+
         setLayout(null);
     }
 
     private void agregarPanelArbol() {
+
         panelArbolProlog = new PanelArbolProlog(null);
         panelArbolProlog.setBounds(320, 60, 700, 500);
         add(panelArbolProlog);
@@ -79,6 +87,7 @@ public class FormularioUi extends JFrame {
     }
 
     private void agregarPanelOperaciones() {
+
         JPanel panelOperaciones = ComponentesFormulario
                 .crearPanel("Operaciones", 10, 20, 300, 150);
         add(panelOperaciones);
@@ -116,6 +125,7 @@ public class FormularioUi extends JFrame {
         JButton btnCerrar = ComponentesFormulario
                 .crearBoton("Cerrar", 10, 100, 120, 30);
         panelOperaciones.add(btnCerrar);
+        btnCerrar.addActionListener(e -> dispose());
 
         fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos prolog (*.pl)", "pl"));
@@ -124,15 +134,20 @@ public class FormularioUi extends JFrame {
 
 
     private void verificar(ActionEvent e) {
-        String metass = textFields.get("txtVerificar").getText().substring(2).trim();
-        metass = metass.endsWith(".") ? metass.substring(0, metass.length() - 1) : metass;
-        List<String> metas = Arrays.stream(metass.split(","))
-                .toList();
-        NodoProlog arbol = resolverBC.resolver(metas);
-        Boolean resultado = arbol.isResuelto();
-        labels.get("labelVerificador").setText(resultado != null ? resultado.toString() : "falso");
-        panelArbolProlog.setArbol(arbol);
-        panelArbolProlog.repaint();
+        if (!archivoAbierto)
+            JOptionPane.showMessageDialog(this,
+                    "Para verificar la solución tiene que crear o abrir un archivo.pl");
+        else {
+            String metass = textFields.get("txtVerificar").getText().substring(2).trim();
+            metass = metass.endsWith(".") ? metass.substring(0, metass.length() - 1) : metass;
+            List<String> metas = Arrays.stream(metass.split(","))
+                    .toList();
+            NodoProlog arbol = resolverBC.resolver(metas);
+            Boolean resultado = arbol.isResuelto();
+            labels.get("labelVerificador").setText(resultado != null ? resultado.toString() : "falso");
+            panelArbolProlog.setArbol(arbol);
+            panelArbolProlog.repaint();
+        }
     }
 
     private void abrirArchivo(ActionEvent actionEvent) {
@@ -142,6 +157,8 @@ public class FormularioUi extends JFrame {
                 txtBC.setText(contenido);
 
                 procesarArchivo(contenido);
+
+                archivoAbierto = true;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -154,11 +171,12 @@ public class FormularioUi extends JFrame {
             guardarComoArchivo(e);
         } else {
             try {
-                ArchivoTexto archivo = new ArchivoTexto(fileChooser.getSelectedFile().getPath());
+                archivo = new ArchivoTexto(fileChooser.getSelectedFile().getPath());
                 archivo.guardar(txtBC.getText());
                 procesarArchivo(txtBC.getText());
                 JOptionPane.showMessageDialog(this, "Archivo guardado con éxito",
                         "Guardar", JOptionPane.INFORMATION_MESSAGE);
+                archivoAbierto = true;
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -174,11 +192,13 @@ public class FormularioUi extends JFrame {
                     filePath += ".pl";
                 }
 
-                ArchivoTexto archivo = new ArchivoTexto(filePath);
+                archivo = new ArchivoTexto(filePath);
                 archivo.guardar(txtBC.getText());
                 procesarArchivo(txtBC.getText());
                 JOptionPane.showMessageDialog(this, "Archivo guardado con éxito",
                         "Guardar", JOptionPane.INFORMATION_MESSAGE);
+
+                archivoAbierto = true;
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -255,6 +275,7 @@ public class FormularioUi extends JFrame {
 
 
     public static void main(String[] arg) {
+
         SwingUtilities.invokeLater(FormularioUi::new);
     }
 }
